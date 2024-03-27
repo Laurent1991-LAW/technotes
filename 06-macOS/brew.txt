@@ -1,0 +1,12 @@
+
+-----------PACKAGE SEARCH------------
+
+brew list
+
+brew list|grep zsz	 # lrzsz or trzsz
+ 
+brew search zsz 	# lrzsz or trzsz
+
+-----------PACKAGE LOCATION------------
+
+brew info lrzsz
