@@ -16,6 +16,10 @@ ps axo pid,ppid,comm,pmem,lstart|grep 333333
 
 
 
+
+
+
+
 # 解压Jar包查看配置文件
 
 
@@ -80,7 +84,11 @@ ifconfig
 
 
 
+# ping与telnet
 
+ping 114.115.207.149
+
+telnet 114.115.207.149 8080
 
 # **查看环境变量**
 

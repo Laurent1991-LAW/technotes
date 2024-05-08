@@ -10,3 +10,8 @@ brew search zsz 	# lrzsz or trzsz
 -----------PACKAGE LOCATION------------
 
 brew info lrzsz
+
+
+
+unzip xxx.zip
+unar xxx.rar

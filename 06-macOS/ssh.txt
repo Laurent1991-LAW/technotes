@@ -1,0 +1,16 @@
+// 生成ssh密钥(若~/.ssh下已存在id_rsa.pub则无需重复生成)
+ssh-keygen -t rsa -P ''
+
+// 将公钥上传至目标服务器root/.ssh目录下
+scp ~/.ssh/id_rsa.pub root@xxx.xx.xxx.xx:/root/.ssh/
+
+// 目标服务器root/.ssh目录下若不存在authorized_keys
+// 需要生成该文件
+touch authorized_keys
+
+// 将公钥内容添加至authorized_keys
+cat /root/.ssh/id_rsa.pub >> authorized_keys
+
+// 赋权
+chmod 644 authorized_keys
+chmod 700 ~/.ssh/

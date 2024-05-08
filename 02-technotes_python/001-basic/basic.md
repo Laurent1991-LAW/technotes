@@ -78,7 +78,37 @@ lst = [[‘中国’, ‘cn’],[‘美国’,‘us’],[‘欧盟’,‘eu’],
 dict = dict(lst) # 直接转化为字典
 ```
 
+# 列表操作
 
+
+
+获取列表最后一个元素 lst[-1]
+
+
+
+
+
+# 继承关系
+
+Python 中可以通过定义抽象基类（Abstract Base Classes, ABCs）来模拟接口的概念。Python 的内置模块 `abc` 提供了 `ABC` 类和 `abstractmethod` 装饰器来创建抽象基类和抽象方法。当一个普通类继承自这样的抽象基类并实现了所有抽象方法时，可以看作是实现了相应接口。语法示例如下：
+
+```python
+from abc import ABC, abstractmethod
+
+class MyInterface(ABC):
+    @abstractmethod
+    def required_method(self):
+        ...
+
+class MyClass(MyInterface):
+    def required_method(self):
+        # 实现抽象方法
+        ...
+```
+
+在上述代码中，`MyClass` 继承自 `MyInterface` 抽象基类，并实现了其中的抽象方法 `required_method`，这就是 Python 中模拟接口实现的一种方式。
+
+总结来说，Python 中的继承关系通过在定义类时在其名称后直接列出父类名来表示，如 `class 子类名(父类名):`。而实现关系在 Python 中通常是指类通过继承抽象基类并实现其中的抽象方法来模拟接口实现，这涉及到 `abc` 模块的 `ABC` 类和 `abstractmethod` 装饰器的使用。
 
 # Selenium
 

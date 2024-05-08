@@ -4,23 +4,31 @@
 
 # 基本
 
-systemctl start docker ——启动docker
+```shell
+// 启动docker
+systemctl start docker 
 
-systemctl restart docker ——重启docker
+// 重启docker
+systemctl restart docker 
 
-systemctl stop docker ——关闭docker
+// 关闭docker
+systemctl stop docker 
 
-docker info ——查看docker信息
+// 查看docker信息
+docker info 
 
-systemctl status docker ——查看运行状态
+// 查看运行状态
+systemctl status docker 
 
-systemctl enable docker ——开机自启
+// 开机自启
+systemctl enable docker 
 
-systemctl disable docker ——禁用开机自启
+// 禁用开机自启
+systemctl disable docker 
 
-
-
-docker info | grep 'Docker Root Dir:' ——查看docker info中具体key的信息
+// 查看docker info中具体key的信息
+docker info | grep 'Docker Root Dir:' 
+```
 
 
 
@@ -104,3 +112,30 @@ docker run **-it --mount** source=container-vol,target=/root centos:7 bash
 省略source宿主机 / target容器
 
 docker run **-it -v** container-vol:/root centos:7 bash
+
+
+
+# 拷贝文件
+
+```shell
+docker cp my_container:/path/to/dump.sql /host/path/dump.sql
+
+// 例如: 
+docker cp ec04:/docker-entrypoint-initdb.d/dump.sql /home/
+
+docker cp /home/dump.sql 8682:/
+```
+
+
+
+
+
+# 常见cli指令
+
+```shell
+mysql
+
+// mongodb
+mongosh
+```
+

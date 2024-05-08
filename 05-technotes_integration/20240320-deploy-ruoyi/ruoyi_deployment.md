@@ -11,26 +11,28 @@ Objectif: deploy Ruoyi project on Huawei cloud server by leveraging Docker for M
 ## 1.2.Command Repository
 
 ```shell
+ssh root@114.115.207.149
+
 docker cp /home/mysql/ry_20231130_en.sql ec04f1f1d781:/etc/
 
 docker exec -i ec04f1f1d781 mysql -u root -proot ruoyidb < /home/mysql/ry_20231130_en.sql
 
 # scp jar package
-scp /Users/luoran/Workspace/01-java/02-ruoyi-vue/ruoyi-admin/target/ruoyi-admin.jar root@114.115.207.149:/home/application/
+scp /Users/luoran/Workspace/01-java/02-ruoyi-vue/ruoyi-admin/target/ruoyi-admin.jar root@156.236.74.75:/home/application/
 
 # Java launch command
-nohup java -jar /home/application/ruoyi-admin.jar --spring.profiles.active=dbprod > nohup-ruoyi.out &
+nohup java -jar /home/application/ruoyi-admin.jar --spring.profiles.active=remotedb > nohup-ruoyi.out &
+
+nohup java -jar /home/application/ruoyi-admin.jar --spring.profiles.active=localdb > nohup-ruoyi.out &
 
 # compress dist folder, scp then remove
 cd ~/Workspace/01-java/02-ruoyi-vue/ruoyi-ui && zip -r dist.zip dist/
 
-scp /Users/luoran/Workspace/01-java/02-ruoyi-vue/ruoyi-ui/dist.zip root@114.115.207.149:/home/web/
-
-rm ~/Workspace/01-java/02-ruoyi-vue/ruoyi-ui/dist.zip
+scp /Users/luoran/Workspace/01-java/02-ruoyi-vue/ruoyi-ui/dist.zip root@156.236.74.75:/home/web/ && rm ~/Workspace/01-java/02-ruoyi-vue/ruoyi-ui/dist.zip
 
 # unzip 
 rm -rf /home/web/dist
-unzip /home/web/dist.zip
+unzip /home/web/dist.zip /home/web/
 
 # check url
 curl http://114.115.207.149:80/stage-api/captchaImage
@@ -107,11 +109,8 @@ SOURCE ./script/ry_20231130.sql;
 # .means current folder
 docker build -t yourCustomerImageName . 
 
-docker run 
---name mysql_3309 
--e MYSQL_ROOT_PASSWORD=root 
--p 3309:3306 
--d yourCustomerImageName
+# run image
+docker run --name mysql_3309 -e MYSQL_ROOT_PASSWORD=root -p 3309:3306 -d ourCustomerImageName
 ```
 
 
@@ -123,12 +122,7 @@ docker run
 2.simple run the image
 
 ```shell
-docker run 
---name myRedis 
---restart=always 
--d 
--p 6379:6379 
-redis
+docker run --name myRedis --restart=always -d -p 6379:6379 redis
 ```
 
 3.in case that we need a configured redis installation, we need to have configuration file ready in linux(eg. /docker/redis/redis.conf), where we can set our own password and for exemple persistence mechanism mode and frequency 
@@ -194,6 +188,11 @@ vi /etc/nginx/nginx.conf # edit configuration file
 vi /var/log/nginx/error.log; # path in config file
 vi /var/log/nginx/access.log;
 
+# copy config and ssl files to server
+scp /Users/luoran/Downloads/nginx.conf root@156.236.74.75:/etc/nginx/
+scp /Users/luoran/Downloads/lauren-sde-portfolio.crt root@156.236.74.75:/etc/nginx/ssl/
+scp /Users/luoran/Downloads/lauren-sde-portfolio.key root@156.236.74.75:/etc/nginx/ssl/
+
 # check if config file syntax's ok
 sudo nginx -t
 
@@ -202,6 +201,7 @@ sudo nginx -t
 ps -ef|grep nginx # nginx pid
 kill -9 pid # kill the master worker then 
 
+sudo service nginx start
 sudo /usr/sbin/nginx
 sudo systemctl restart nginx
 sudo service nginx reload
