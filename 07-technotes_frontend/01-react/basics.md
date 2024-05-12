@@ -660,6 +660,48 @@ const App = () => {
 
 
 
+## 1.7.className动态变化
+
+- **[基本]** classnames包
+
+```react
+import classNames from 'classnames' 
+className={classNames('nav-item', { active: type === item. type })}
+```
+
+- **[高阶]** tailwind + tailwind merge + clsx
+  - `clsx` 库的作用就是简化这个过程，它接受一系列参数，并根据这些参数的真假情况来生成最终的 CSS 类名字符串。这些参数可以是字符串、对象或数组。它会自动处理参数并返回一个拼接好的类名字符串;
+  -  tailwind merge相当于再对这一系列的样式进行去重、排序操作
+
+```react
+// utils定义
+import { type ClassValue, clsx } from "clsx"
+import { twMerge } from "tailwind-merge"
+ 
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
+
+// 应用
+<Link
+    key={route.href}
+    href={route.href}
+    className={cn(
+      "text-sm group flex p-3 w-full justify-start font-medium cursor-pointer hover:text-white hover:bg-white/10 rounded-lg transition",
+      pathname === route.href
+        ? "text-white bg-white/10"
+        : "text-zinc-400"
+    )}
+  >
+              <div className="flex items-center flex-1">
+                <route.icon className={cn("h-5 w-5 mr-3", route.color)} />
+                {route.label}
+              </div>
+</Link>
+```
+
+
+
 # 02.Redux
 
 ## 2.1.概述与环境准备
@@ -1195,6 +1237,22 @@ const Layout = () => {
 - **路径区别**: 是否带#
 
 ![Screenshot 2024-04-21 at 18.57.57](./assets/Screenshot 2024-04-21 at 18.57.57.png)
+
+
+
+## 3.2.编程式路由
+
+- Next.js 提供了 `next/router` 模块，可以使用它的 API 来进行路由操作，如 `push`、`replace` 和 `reload` 等方法。
+
+```react
+import { useRouter } from "next/navigation";
+
+const onClick = () => {
+    router.push(href);
+}
+```
+
+
 
 
 
