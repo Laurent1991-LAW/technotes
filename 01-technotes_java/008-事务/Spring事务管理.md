@@ -279,7 +279,7 @@ public class OrderServiceImpl {
 
 与声明式事务对应的就是编程式事务，基于底层的API，开发者在代码中手动的管理事务的开启、提交、回滚等操作。在spring项目中可以使用TransactionTemplate类的对象，手动控制事务。
 
-```
+```jsx
 @Autowired 
 private TransactionTemplate transactionTemplate; 
  

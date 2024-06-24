@@ -8,7 +8,7 @@
 
 1、结果返回 非阻塞
 
-- 使用Future时只能通过isDone()方法判断任务是否完成，或者通过**get()方法阻塞线程等待结果返回，它不能非阻塞的情况下，执行更进一步的操作**。
+- 使用Future时只能通过isDone( )方法判断任务是否完成，或者通过**get()方法阻塞线程等待结果返回，它不能非阻塞的情况下，执行更进一步的操作**。
 
 2、灵活性
 
@@ -149,8 +149,11 @@ public <U> CompletableFuture<U> thenAccept(Function<? super T, ? extends U> fn);
 - thenApply则为返回值本身；
 
 ```java
-public <U> CompletableFuture<U> thenCompose(Function<? super T, ? extends CompletionStage<U>> fn);
-public <U> CompletableFuture<U> thenComposeAsync(Function<? super T, ? extends CompletionStage<U>> fn) ;
+public <U> CompletableFuture<U> thenCompose(
+  	Function< ? super T, ? extends CompletionStage<U> > fn);
+
+public <U> CompletableFuture<U> thenComposeAsync(
+  	Function<? super T, ? extends CompletionStage<U>> fn) ;
 ```
 
 代码实例：
@@ -168,7 +171,8 @@ CompletableFuture<Integer> future = CompletableFuture
     .thenCompose(new Function<Integer, CompletionStage<Integer>>() {
         @Override
         public CompletionStage<Integer> apply(Integer param) {
-            return CompletableFuture.supplyAsync(new Supplier<Integer>() {
+            
+          return CompletableFuture.supplyAsync(new Supplier<Integer>() {
                 @Override
                 public Integer get() {
                     int number = param * 2;
@@ -176,6 +180,7 @@ CompletableFuture<Integer> future = CompletableFuture
                     return number;
                 }
             });
+          
         }
     });
 
@@ -366,6 +371,7 @@ public static CompletableFuture<Void> allOf(CompletableFuture<?>... cfs)
 
 ```java
 Random random = new Random();
+
 CompletableFuture<String> future1 = CompletableFuture.supplyAsync(() -> {
     try {
         TimeUnit.SECONDS.sleep(random.nextInt(5));

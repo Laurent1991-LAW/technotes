@@ -5,11 +5,7 @@
 # 01.常见属性
 
 - v-model: 绑定参数, 实现数据驱动视图
-
-- v-hasPermi: 绑定权限, 比如 v-hasPermi="['system:role:remove']"
-
 - v-html: 解析{{value}}属性内的html标签
-
 - v-if: 基于判断结果决定是否显示标签
 
 <img src="./assets/image-20240511111508462.png" alt="image-20240511111508462" style="zoom:50%;" />
@@ -24,7 +20,7 @@
 
 <img src="./assets/image-20240511111848545.png" alt="image-20240511111848545" style="zoom:50%;" />
 
-- v-bind标签用于将data中的值 绑定到 html标签 的属性上, 比如a标签的href, src的img, button标签的disable, div标签的class、style, input标签在checkbox类型下的checked等, 
+- v-bind标签用于 将data中的值 绑定到 html标签 的属性上, 比如a标签的href, src的img, button标签的disable, div标签的class、style, input标签在checkbox类型下的checked等, 
 
 ```html
 <img v-bind:src="imagePath" alt="Example">
@@ -88,14 +84,10 @@
 
 **解析**：当对象创建完成 并在 指定区域开始"渲染"——将区域中的 标签表达式 进行解析加载，一旦成功，mounted执行完成，用户可以看到解析后的页面
 
-
-
 **Vue对象修改**：
 
 - beforeUpdate
 - Updated
-
-
 
 **Vue对象销毁**
 

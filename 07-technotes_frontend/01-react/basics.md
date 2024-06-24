@@ -11,7 +11,7 @@
 const { commentsLst, setCommentsLst } = useGetCommments()
 
 // 定义组件(!!!注意引入父组件参数时, 外围的花括号!!!)
-function Item({ item, onDel }) {return (...)}
+function Item( { item, onDel } ) { return (...) }
 
 // 事件
 onClick={ () => onDel(item.rpid) }
@@ -42,6 +42,9 @@ const res = await fetchDetailAPI(id!)
 
 
 - 标签里的事件方法, 比如用lambda: `onClick={() => handleTabChange(item.type)}`, 必要时还可引入事件对象e, 注意此时的item.type不需要花括号包裹 ;
+
+
+
 - 当事件类型触发, 比如onConfirm/onChange方法需要获取标签内容, 比如DatePIcker的日期、输入框的输入值时, 几乎都是 自定义方法获取, 而非`onClick={() => handleTabChange(item.type)}`模式, 多为如下方式, why ? 此时传入的value才是我们需要的 日期 或 输入框内容
 
 ```jsx
@@ -49,6 +52,9 @@ const res = await fetchDetailAPI(id!)
 const [dateVisible, setDateVisible] = useState(false)
 const [datePicked, setDatePicked] = useState()
 
+// ------------------------------------
+// 正确示范
+// ------------------------------------
 const confirmDatePick = (value) => {
         setDateVisible(false)
         setDatePicked(value) // 
@@ -59,6 +65,7 @@ const confirmDatePick = (value) => {
     title="记账日期"
     max={new Date()}
     visible={dateVisible}
+  	// 直接定义函数
     onConfirm={confirmDatePick}
     onCancel={() => setDateVisible(false)}
     onClose={() => setDateVisible(false)}
@@ -72,7 +79,7 @@ const confirmDatePick = (value) => {
     placeholder="0.00"
     type="number"
     value={ money }
-    onChange={() => setMoney(value)} // 错误!此方法拿不到value值
+    onChange={ () => setMoney(value) }	 // 错误!此方法拿不到value值
 />
 ```
 
@@ -85,7 +92,7 @@ const confirmDatePick = (value) => {
 
 ```html
 <span
-className={`nav-item ${item.type === type && 'active'}`}>
+className={`nav-item ${item.type == type && 'active'}`}>
   content
 </span>
 ```
@@ -141,10 +148,11 @@ npm install normalize.css
 ```javascript
 // cartList 为 购物车列表, 以下reduce方法可对列表进行遍历stream处理
 // 0为初始值
+// 比如 购物车总额 的计算 =》reduce 
 const totalPrice = cartList.reduce((acc, curr) => acc + curr.count * curr.price, 0)
 
 // toFixed方法 对 计算结果进行两位小数取整操作
-{totalPrice.toFixed(2)} 
+{ totalPrice.toFixed(2) } 
 ```
 
 
@@ -173,16 +181,16 @@ export default App
 
 在JSX中可以通过 大括号语法{} 识别 JavaScript中的表达式，比如常见的变量、函数调用、方法调用等等
 
-1. 使用引号传递字符串 
-2. 使用JavaScript变量 
-3. 函数调用和方法调用 
-4. 使用JavaScript对象(比如\<div style={{clolor:'red', fontSize:'20px'}}>, 外层花括号为JSX, 内层花括号则为对象标识)
+1. 使用 引号传递字符串 
+2. 使用 JavaScript变量 
+3. 函数调用 和 方法调用 
+4. 使用JavaScript对象(比如\<div style={ {clolor:'red', fontSize:'20px'} }>, 外层花括号为JSX, 内层花括号则为对象标识)
 
 ![Screenshot 2024-04-12 at 16.18.27](./assets/Screenshot 2024-04-12 at 16.18.27.png)
 
-注意:if语句、switch语句、变量声明属于语句，不是表达式，不能出现在{}中
 
 
+**注意:** if语句、switch语句、变量声明属于语句，不是表达式，不能出现在{}中
 
 ![Screenshot 2024-04-12 at 17.17.57](./assets/Screenshot 2024-04-12 at 17.17.57.png)
 
@@ -220,7 +228,7 @@ export default App
 
 ![Screenshot 2024-04-12 at 17.32.18](./assets/Screenshot 2024-04-12 at 17.32.18.png)
 
-- 上图, 调用事件同样使用{}, 方法参数化;
+- 上图, 调用事件同样使用 { }, 方法本来也可以参数化;
 
 - 如何获取事件参数 ? 
 - const onSubmit = (e) => { console.log('Press button submit...', e)  }, 控制台则会输出:
@@ -286,7 +294,19 @@ const handleChangeName = ()
 
 **用户输入框控制:**
 
-- useState同样适用于输入框内容控制, 比如用户输入在input的内容, 会被绑定到标签的value值上, 通过useState绑定参数才能进行获取(将input标签的value={value} / 添加内容变化事件绑定onChange={(e) => setValue(e.target.value)}), 并在用户完成输入提交后, 完成“清空”操作 
+- useState同样适用于 输入框 内容控制, 比如 用户输入在input的内容, 会被绑定到标签的value值上, 通过 useState绑定参数才能进行获取(将input标签的value={value} + 添加内容变化事件绑定onChange={(e) => setValue(e.target.value)}), 并在用户完成输入提交后, 完成“清空”操作 
+
+```jsx
+const App = () => {
+
+	const [value, setValue] = useState('')
+
+	return <input 
+           value={value} 
+           onChange={(e) => { setValue(e.target.value) }}>
+  			</input>
+}
+```
 
 
 
@@ -296,14 +316,18 @@ const handleChangeName = ()
 
 ```js
 // 引入并声明
-import {useRef} from 'react'
+import { useRef } from 'react'
 
 const inputRef = useRef(null)
+
 // 参数绑定
 <input type='text' ref={inputRef}
+
 // 操作dom, 比如focus在输入框(即输入标识跳动)
 inputRef.current.focus()
 ```
+
+
 
 获取DOM方式对比 : 
 
@@ -325,12 +349,6 @@ var myChart = echarts.init(chartDom);
 
 <div ref={mainRef} ></div>
 ```
-
-
-
-
-
-
 
 
 
@@ -364,6 +382,59 @@ var myChart = echarts.init(chartDom);
 **方式**: 通过将父组件中定义的方法传入子组件来实现
 
 ![Screenshot 2024-04-13 at 20.28.01](./assets/Screenshot 2024-04-13 at 20.28.01.png)
+
+#### props.children详解
+
+在React中，`props`是组件之间通信的主要方式。`props`（属性）是父组件向子组件传递数据的一种机制。而`children`是`props`对象中的一个特殊属性，它包含了父组件在子组件标签之间传递的内容。
+
+### 使用场景
+
+`children`的使用场景非常广泛，它允许父组件动态地向子组件传递内容，这些内容可以是文本、其他组件、甚至是JSX元素。以下是一些常见的使用场景：
+
+1. **布局组件**：当你创建一个布局组件（如`Card`、`Container`、`Accordion`等）时，你可以使用`children`来允许父组件决定在布局内部渲染什么内容。
+
+2. **插槽（Slot）**：类似于HTML中的`slot`，`children`可以用来实现组件内部的插槽，允许用户自定义组件的某些部分。
+
+3. **高阶组件**：在高阶组件（HOC）中，`children`可以用来传递组件，使得HOC可以包裹并增强组件，而不改变其结构。
+
+4. **动态内容**：当组件需要根据不同的上下文渲染不同的内容时，`children`提供了一种灵活的方式来实现这一点。
+
+### 原理
+
+`children`的原理相对简单，当父组件在子组件标签内部放置内容时，这些内容会被React自动收集，并作为`children`属性传递给子组件。子组件可以通过`this.props.children`来访问这些内容。
+
+在React内部，`this.props.children`可以是多种类型：
+
+- 如果父组件没有在子组件标签内部放置任何内容，`this.props.children`将是一个`undefined`。
+- 如果父组件放置了一个单独的组件或元素，`this.props.children`将是一个对象。
+- 如果父组件放置了多个组件或元素，`this.props.children`将是一个数组。
+
+React提供了一些辅助函数来处理不同类型的`children`，例如`React.Children.map`、`React.Children.forEach`、`React.Children.count`等，这些函数可以帮助你安全地遍历和操作`children`。
+
+### 示例
+
+```jsx
+// 父组件
+function ParentComponent() {
+  return (
+    <ChildComponent>
+      <h1>Hello, World!</h1>
+      <p>This is a paragraph.</p>
+    </ChildComponent>
+  );
+}
+
+// 子组件
+function ChildComponent(props) {
+  return (
+    <div>
+      {props.children}
+    </div>
+  );
+}
+```
+
+在这个例子中，`ChildComponent`接收到的`props.children`将是一个包含`<h1>`和`<p>`元素的数组。子组件通过`{props.children}`渲染这些元素。
 
 
 
@@ -474,33 +545,18 @@ const App = () => {
 **<u>代码示例</u>**
 
 ```js
+// -------------------
+// 顶层组件-爷爷
+// -------------------
+
 import { createContext, useContext } from 'react'
 
-// 1.利用createContext方法创建上下文对象
-//   习惯性大驼峰命名
-const MsgContext = createContext()
-
-function B() {
-    // 3.在底层组件内部, 用useContext方法传入 上下文对象 为参数
-    //   则可获取自provider传递过来的参数
-    const msg = useContext(MsgContext)
-    return (
-        <div>
-            This is B component, {msg}
-        </div>
-    )
-}
-
-function A() {
-    return (
-        <div>
-            This is A component
-            <B />
-        </div>
-    )
-}
-
 function App() {
+  
+      // 1.利用createContext方法创建上下文对象
+    //   习惯性大驼峰命名
+    const MsgContext = createContext()
+  
     const msg = ' I come from App component!'
     // 2.利用上下文对象的标签 的 provider, 包裹内部嵌套的结构
     //  value属性可用于传递信息
@@ -515,6 +571,32 @@ function App() {
 }
 
 export default App;
+
+// -------------------
+// 子级组件-爸爸A 内部再嵌套一个孙子B
+// -------------------
+function A() {
+    return (
+        <div>
+            This is A component
+            <B />
+        </div>
+    )
+}
+
+// -------------------
+// 子子级组件-孙子
+// -------------------
+function B() {
+    // 3.在底层组件内部, 用useContext方法传入 上下文对象 为参数
+    //   则可获取自provider传递过来的参数
+    const msg = useContext(MsgContext)
+    return (
+        <div>
+            This is B component, {msg}
+        </div>
+    )
+}
 ```
 
 
@@ -548,10 +630,12 @@ useEffect是一个React Hook函数，用于在React组件中创建不是由事�
 
 ```js
 useEffect(()=>{
-	// 实现副作用代码
+	// componentDidMount + componentDidUpdate (若无依赖项)
+  
+  // componentDidMount (依赖项为空数组)
   
 	return {
-    // 消除副作用逻辑
+    // 若有返回体, 则对应 componentWillUnmount 
   }
 },[])
 ```
@@ -597,7 +681,7 @@ export default App
 
 ### 1.6.1.概念
 
-**概念**: 自定义Hook是以 use 打头的函数，通过自定义Hook函数可以用来实现逻辑的封装和复用
+**概念**: 自定义Hook是以 use 打头的函数，通过 自定义Hook函数可以用来实现逻辑的封装和复用
 
 **使用规则**
 
@@ -609,7 +693,7 @@ export default App
 ### 1.6.2.应用
 
 - blibli评论列表分离App组件、评论列表组件
-- 约定俗成: 主组件负责请求数据, 副组件仅负责渲染
+- 约定俗成: 主组件 负责 请求数据, 副组件 仅 负责渲染
 
 
 
@@ -702,9 +786,11 @@ export function cn(...inputs: ClassValue[]) {
 
 
 
-# 02.Redux
+# 02.Redux、Zustand、Context API
 
-## 2.1.概述与环境准备
+## 2.1.Redux
+
+### 2.1.概述与环境准备
 
 ### 2.1.1.概念
 
@@ -749,7 +835,7 @@ npm run start
 
 
 
-## 2.2.基本功能实现
+### 2.2.基本功能实现
 
 - 项目结构
 
@@ -900,7 +986,7 @@ export default App;
 
 
 
-## 2.3.实现异步操作 (ajax)
+### 2.3.实现异步操作 (ajax)
 
 - Redux定义store: 
   - 关键在于定义一个异步方法, 内部调用了reducers的方法 ;
@@ -980,6 +1066,247 @@ export default App;
 ```
 
 
+
+## 2.2.zustand
+
+### 基础用法
+
+- 安装包` npm i zustand`
+- 引入create方法, 其基本结构为 : 1. 传入一个函数; 2. 该函数带有set参数; 3.返回一个对象
+- 返回的对象里, 做以下两件事: 定义属性 + 定义行为
+
+```jsx
+import { create } from 'zustand'
+
+create((set) => {
+  return {
+    // 1.定义state
+    count: 0
+    // 2.修改state方法
+    inc: () => { 
+    
+    }
+  }
+})
+```
+
+- 传入的set什么时候用? 定义行为时使用
+
+```jsx
+inc: () => { 
+	set( (state) => ({count: state.count + 1}) )    // 返回一个对象
+}
+```
+
+> (param) => ({ field1: 1, field2: 2 }) 指的是 传入参数, return一个对象的函数, 此处return可省略
+
+- **完整示例**
+
+```jsx
+import { create } from 'zustand'
+
+const useStore = create((set) => {
+  return {
+    count: 0,
+    inc: () => {
+      set(
+        // 需要原数据作支撑
+        (state) => ({ count: state.count + 1 })
+      )
+      // 不需要原数据直接改
+      set({ count: 100 })
+    }
+  }
+})
+
+function App() {
+  const { count, inc } = useStore()
+
+  return (
+    <div className="App">
+      <button onClick={inc}> { count } </button>
+    </div>
+  );
+}
+
+export default App;
+
+```
+
+
+
+### 异步支持
+
+对于异步的支持不需要特殊的操作，直接在函数中编写异步逻辑，最后只需要调用set方法传入新状态即可
+
+![image-20240503192623171](./assets/image-20240503192623171.png)
+
+
+
+### 切片模式
+
+- 当单个切片比较大时, 可以对切片进行切分, 然后统一导出;
+
+```jsx
+import { create } from 'zustand'
+
+// 创建counter相关切片
+const createCounterStore = (set) => {
+  return {
+    count: 0,
+    setCount: () => {
+      set(state => ({ count: state.count + 1 }))
+    }
+  }
+}
+
+// 创建channel相关切片
+const createChannelStore = (set) => {
+  return {
+    channelList: [],
+    fetchGetList: async () => {
+      const res = await fetch(URL)
+      const jsonData = await res.json()
+      set({ channelList: jsonData.data.channels })
+    }
+  }
+}
+
+// 组合切片
+const useStore = create((...a) => ({
+  ...createCounterStore(...a),
+  ...createChannelStore(...a)
+}))
+```
+
+- 导入引用
+
+```jsx
+function App() {
+  const {count, inc, channelList, fetchChannelList } = useStore()
+  return (
+    <>
+      <button onClick={inc}>{count}</button>
+      <ul>
+        {channelList.map((item) => (
+          <li key={item.id}>{item.name}</li>
+        ))}
+      </ul>
+    </>
+  )
+}
+
+export default App
+```
+
+
+
+### 对接DevTools
+
+> 简单的调试我们可以安装一个 名称为 simple-zustand-devtools 的调试工具
+
+### 安装调试包
+
+```bash
+npm i simple-zustand-devtools -D
+```
+
+### 配置调试工具
+
+```javascript
+import create from 'zustand'
+
+// 导入核心方法
+import { mountStoreDevtool } from 'simple-zustand-devtools'
+
+// 省略部分代码...
+
+
+// 开发环境开启调试
+if (process.env.NODE_ENV === 'development') {
+  mountStoreDevtool('channelStore', useChannelStore)
+}
+
+
+export default useChannelStore
+```
+
+### 打开 React调试工具
+
+![image-20240503193730676](./assets/image-20240503193730676.png)
+
+
+
+## 2.3.Context API示例
+
+以下是一个简单的React Context API使用示例。这个例子展示如何创建一个Context用于管理用户信息，并在不同组件间传递这些信息。
+
+首先，创建一个Context：
+
+```jsx
+// UserContext.js
+import React from 'react';
+
+// 创建一个Context
+const UserContext = React.createContext();
+
+export default UserContext;
+```
+
+然后，创建一个提供状态的组件（Provider）：
+
+```jsx
+// App.js
+import React from 'react';
+import UserContext from './UserContext';
+import ChildComponent from './ChildComponent';
+
+function App() {
+  // 这是将要共享的状态
+  const user = {
+    name: '张三',
+    age: 28,
+    email: 'zhangsan@example.com'
+  };
+
+  return (
+    <UserContext.Provider value={user}>
+      <div>
+        <h1>应用程序</h1>
+        <ChildComponent />
+      </div>
+    </UserContext.Provider>
+  );
+}
+
+export default App;
+```
+
+接下来，创建一个消费状态的组件：
+
+```jsx
+// ChildComponent.js
+import React, { useContext } from 'react';
+import UserContext from './UserContext';
+
+function ChildComponent() {
+  // 使用useContext钩子消费UserContext中的值
+  const user = useContext(UserContext);
+
+  return (
+    <div>
+      <h2>用户信息:</h2>
+      <p>姓名: {user.name}</p>
+      <p>年龄: {user.age}</p>
+      <p>邮箱: {user.email}</p>
+    </div>
+  );
+}
+
+export default ChildComponent;
+```
+
+在这个例子中，我们创建了一个`UserContext`来存储用户信息，并在`App`组件中通过`UserContext.Provider`将其作为上下文值提供给组件树。`ChildComponent`组件通过`useContext`钩子获取到了这个上下文值，并显示用户信息。这样，即使`ChildComponent`没有直接从它的props接收这些信息，也能访问到用户数据，实现了状态的跨组件传递。
 
 # 03.Router
 
@@ -1248,11 +1575,9 @@ const Layout = () => {
 import { useRouter } from "next/navigation";
 
 const onClick = () => {
-    router.push(href);
+    router.push('/dashboard');
 }
 ```
-
-
 
 
 
@@ -1367,6 +1692,56 @@ const result = fib(count1)
 
 
 
+### AI answer
+
+在React中，`useMemo`是一个钩子函数，用于优化性能，特别是在处理昂贵的计算或渲染大量数据时。`useMemo`允许你缓存一个值，并且只有当依赖项发生变化时，这个值才会重新计算。这可以避免在每次渲染时都执行昂贵的计算。
+
+### 使用场景
+1. **昂贵的计算**：当你的组件中有一些计算量大的函数时，可以使用`useMemo`来避免不必要的重复计算。
+2. **避免不必要的渲染**：当某些计算结果用于决定是否渲染子组件时，使用`useMemo`可以减少不必要的渲染。
+
+### 代码示例
+
+下面是一个使用`useMemo`的示例，其中我们有一个昂贵的计算函数，它计算一个数组中所有数字的平方和。我们使用`useMemo`来确保这个计算只在数组变化时执行。
+
+```jsx
+import React, { useMemo } from 'react';
+
+function ExpensiveCalculation({ numbers }) {
+  const sumOfSquares = useMemo(() => {
+    console.log('Calculating sum of squares...');
+    return numbers.reduce((sum, num) => sum + num * num, 0);
+  }, [numbers]);
+
+  return (
+    <div>
+      <h1>Sum of Squares</h1>
+      <p>The sum of squares of the numbers is: {sumOfSquares}</p>
+    </div>
+  );
+}
+
+// --------------
+export default function App() {
+  const [numbers, setNumbers] = React.useState([1, 2, 3, 4, 5]);
+
+  const handleAddNumber = () => {
+    setNumbers(prevNumbers => [...prevNumbers, Math.floor(Math.random() * 10) + 1]);
+  };
+
+  return (
+    <div>
+      <button onClick={handleAddNumber}>Add Number</button>
+      <ExpensiveCalculation numbers={numbers} />
+    </div>
+  );
+}
+```
+
+在这个例子中，`ExpensiveCalculation`组件接收一个`numbers`数组，并使用`useMemo`来计算数组中所有数字的平方和。这个计算只在`numbers`数组变化时执行，从而避免了不必要的计算。当点击“Add Number”按钮时，会向数组中添加一个新数字，这将触发`useMemo`重新计算平方和。
+
+
+
 ## 4.3.React.memo-基础使用
 
 - 应用react的memo方法, 包裹子组件, 此时, 每次重新渲染父组件App时, 将不会重新渲染子组件
@@ -1399,7 +1774,7 @@ export default App;
 
 - 当借助props进行参数传递时, 只有传递的参数发生变化(底层通过Object.is方法进行比较), 子组件才会重新渲染;
 - 注意 传递参数类型 为 简单类型和复杂类型 时, 情况不一;
-- 如何保证复杂类型引用稳定? 使用useMemo, 说白了, 就是‘使用缓存的值’, 而非重建 ` const list = useMemo(() => return [1,2,3], [])`
+- 如何保证 复杂类型引用稳定? 使用useMemo, 说白了, 就是‘使用缓存的值’, 而非重建 ` const list = useMemo(() => return [1,2,3], [])`
 
 ![image-20240503153150802](./assets/image-20240503153150802.png)
 
@@ -1426,10 +1801,13 @@ import { forwardRef, useRef } from "react"
 
 // --------------
 // 依靠forwardRef方法
-const Son = forwardRef((props, ref)=> {
+const Son = forwardRef(
+  (props, ref) => {
   return <input type='text' ref={ref}></input>
-})
+	}
+)
 
+// -----------------
 function App() {
   const sonRef = useRef(null)
   const onClick = () => {
@@ -1459,7 +1837,8 @@ export default App;
 import { forwardRef, useImperativeHandle, useRef } from "react"
 
 // 子组件
-const Son = forwardRef((props, ref) => {
+const Son = forwardRef(
+  (props, ref) => {
   // 注意 入参的ref仅为父组件传递用
   // 针对子组件dom的操作 仍需要useRef获取
   const sonRef = useRef(null)
@@ -1498,7 +1877,7 @@ export default App;
 
 
 
-# 05.Class类组件与Zustand
+# 05.Class类组件
 
 ## 5.1.基础结构
 
@@ -1513,18 +1892,22 @@ class Counter extends Component {
   state = {
     count:0
   }
+  
 	// 定义函数 内部的setState是内置的修改属性的方法
   setCount = () => {
     this.setState({
       count: this.state.count + 1
     })
   }
+  
 	// render方法负责渲染
   render () {
     return <button onClick={this.setCount}>{ this.state.count }</button>
   }
 }
 
+
+// --------------------------
 function App() {
   return (
     <div className="App">
@@ -1570,174 +1953,42 @@ export default App;
 
 
 
-## 5.4.zustand-基础用法
+## 5.4.函数组件生命周期钩子
 
-- 安装包` npm i zustand`
-- 引入create方法, 其基本结构为 : 1. 传入一个函数; 2. 该函数带有set参数; 3.返回一个对象
-- 返回的对象里, 做以下两件事: 定义属性 + 定义行为
+在React的函数组件中，如果你希望使用类组件中的生命周期函数，你可以使用React提供的Hooks。Hooks是React 16.8版本引入的新特性，它允许你在不编写类组件的情况下使用状态和其他React特性。
 
-```jsx
-import { create } from 'zustand'
+对于生命周期函数的模拟，React提供了几个特定的Hooks，包括：
 
-create((set) => {
-  return {
-    // 1.定义state
-    count: 0
-    // 2.修改state方法
-    inc: () => { 
-    
-    }
-  }
-})
-```
+1. **useState**：用于在函数组件中添加状态。
+2. **useEffect**：用于模拟类组件中的`component Did Mount`、`component Did Update`和`componentWillUnmount`生命周期方法。
 
-- 传入的set什么时候用? 定义行为时使用
+例如，如果你想在函数组件中模拟`componentDidMount`和`componentDidUpdate`，你可以这样写：
 
 ```jsx
-inc: () => { 
-	set( (state) => ({count: state.count + 1}) )    // 返回一个对象
-}
-```
+import React, { useEffect } from 'react';
 
-> (param) => ({ field1: 1, field2: 2 }) 指的是 传入参数, return一个对象的函数, 此处return可省略
+function MyComponent() {
+  useEffect(() => {
+    // 这个代码块会在 组件挂载后 以及 每次更新后 执行
+    // 类似于 componentDidMount 和 componentDidUpdate
+    console.log('Component mounted or updated');
 
-- **完整示例**
+    // 如果你只想在 组件挂载时 执行，可以返回一个 清理函数
+    // 这个清理函数会在组件卸载时执行，类似于 componentWillUnmount
+    return () => {
+      console.log('Component will unmount');
+    };
+  }, [/* 依赖数组 */]);
 
-```jsx
-import { create } from 'zustand'
-
-const useStore = create((set) => {
-  return {
-    count: 0,
-    inc: () => {
-      set(
-        // 需要原数据作支撑
-        (state) => ({ count: state.count + 1 })
-      )
-      // 不需要原数据直接改
-      set({ count: 100 })
-    }
-  }
-})
-
-function App() {
-  const { count, inc } = useStore()
-
-  return (
-    <div className="App">
-      <button onClick={inc}> { count } </button>
-    </div>
-  );
+  // 组件的其他代码
 }
 
-export default App;
-
+export default MyComponent;
 ```
 
+在上面的例子中，`useEffect`的第二个参数是一个依赖数组。如果这个数组为空，那么`useEffect`中的代码只会在组件挂载和卸载时执行。如果数组中有值，那么`useEffect`中的代码会在这些值发生变化时执行。
 
-
-
-
-## 5.5.zustand-异步支持
-
-对于异步的支持不需要特殊的操作，直接在函数中编写异步逻辑，最后只需要调用set方法传入新状态即可
-
-![image-20240503192623171](./assets/image-20240503192623171.png)
-
-
-
-## 5.6.zustand-切片模式
-
-- 当单个切片比较大时, 可以对切片进行切分, 然后统一导出;
-
-```jsx
-
-import { create } from 'zustand'
-
-// 创建counter相关切片
-const createCounterStore = (set) => {
-  return {
-    count: 0,
-    setCount: () => {
-      set(state => ({ count: state.count + 1 }))
-    }
-  }
-}
-
-// 创建channel相关切片
-const createChannelStore = (set) => {
-  return {
-    channelList: [],
-    fetchGetList: async () => {
-      const res = await fetch(URL)
-      const jsonData = await res.json()
-      set({ channelList: jsonData.data.channels })
-    }
-  }
-}
-
-// 组合切片
-const useStore = create((...a) => ({
-  ...createCounterStore(...a),
-  ...createChannelStore(...a)
-}))
-```
-
-- 导入引用
-
-```jsx
-function App() {
-  const {count, inc, channelList, fetchChannelList } = useStore()
-  return (
-    <>
-      <button onClick={inc}>{count}</button>
-      <ul>
-        {channelList.map((item) => (
-          <li key={item.id}>{item.name}</li>
-        ))}
-      </ul>
-    </>
-  )
-}
-
-export default App
-```
-
-
-
-## 5.7.对接DevTools
-
-> 简单的调试我们可以安装一个 名称为 simple-zustand-devtools 的调试工具
-
-### 安装调试包
-
-```bash
-npm i simple-zustand-devtools -D
-```
-
-### 配置调试工具
-
-```javascript
-import create from 'zustand'
-
-// 导入核心方法
-import { mountStoreDevtool } from 'simple-zustand-devtools'
-
-// 省略部分代码...
-
-
-// 开发环境开启调试
-if (process.env.NODE_ENV === 'development') {
-  mountStoreDevtool('channelStore', useChannelStore)
-}
-
-
-export default useChannelStore
-```
-
-### 打开 React调试工具
-
-![image-20240503193730676](./assets/image-20240503193730676.png)
+通过这种方式，你可以在函数组件中有效地使用生命周期函数的功能。
 
 
 
@@ -1946,7 +2197,242 @@ export default App
 
 
 
-# 09.极客园移动端案例 (Mobile)
+# 07.Advanced Concepts
+
+## 1.高阶组件HOC
+
+- Not a specific API, but a design pattern helps to reuse components
+- abstract common logics
+
+
+
+案例: 
+
+suppose we have a CommentList component and a BlogPost component, 
+
+1.装载完成后 when did mount，给DataSource添加了一个change listener (传入handleChange函数)
+2.当数据源发生变化后when datasource change，在监听器内部调用setState
+3.卸载之后when will unmount，移除change listener
+
+### 定义commentList类
+
+```jsx
+class CommentList extends React.Component {
+
+  constructor() {
+
+   super();
+
+   this.handleChange = this.handleChange.bind(this);
+
+   this.state = {
+
+    comments: DataSource.getComments() // "DataSource" is some global data source
+
+   };
+
+  }
+
+
+  componentDidMount() {
+
+   // Subscribe to changes
+
+   DataSource.addChangeListener(this.handleChange);
+
+  }
+
+
+  componentWillUnmount() {
+
+   // Clean up listener
+
+   DataSource.removeChangeListener(this.handleChange);
+
+  }
+
+ 
+  handleChange() {
+
+   // Update component state whenever the data source changes
+
+   this.setState({
+
+    comments: DataSource.getComments()
+
+   });
+
+  }
+
+ 
+  render() {
+
+   return (
+
+    <p>
+
+     {this.state.comments.map((comment) => (
+
+      <Comment comment={comment} key={comment.id} />
+
+     ))}
+
+    </p>
+
+   );}}
+```
+
+### 定义BlogPost类
+
+```js
+class BlogPost extends React.Component {
+
+  constructor(props) {
+
+   super(props);
+
+   this.handleChange = this.handleChange.bind(this);
+
+   this.state = {
+
+    blogPost: DataSource.getBlogPost(props.id)
+
+   };
+
+  }
+
+  componentDidMount() {
+
+   DataSource.addChangeListener(this.handleChange);
+
+  }
+
+  componentWillUnmount() {
+
+   DataSource.removeChangeListener(this.handleChange);
+
+  }
+
+  handleChange() {
+
+   this.setState({
+
+    blogPost: DataSource.getBlogPost(this.props.id)
+
+   });
+
+  }
+
+  render() {
+
+   return <TextBlock text={this.state.blogPost} />;
+  }
+
+ }
+```
+
+### 定义HOC流程
+
+```jsx
+// This function takes a component
+
+function withSubscription(WrappedComponent, selectData) {
+
+ // ...and returns another component...
+
+ return class extends React.Component {
+
+  constructor(props) {
+
+   super(props);
+
+   this.handleChange = this.handleChange.bind(this);
+
+   this.state = {
+
+    data: selectData(DataSource, props)
+
+   };
+
+  }
+
+ 
+  componentDidMount() {
+
+   // ... that takes care of the subscription...
+
+   DataSource.addChangeListener(this.handleChange);
+
+  }
+
+  componentWillUnmount() {
+
+   DataSource.removeChangeListener(this.handleChange);
+
+  }
+
+  handleChange() {
+
+   this.setState({
+
+    data: selectData(DataSource, this.props)
+
+   });
+
+  }
+
+  render() {
+
+   // ... and renders the wrapped component with the fresh data!
+   // Notice that we pass through any additional props
+   return <WrappedComponent data={this.state.data} {...this.props} />;
+
+  }
+
+ };
+
+}
+```
+
+### 定义HOC结果类
+
+```jsx
+const CommentListWithSubscription = withSubscription(
+
+ CommentList,
+
+ (DataSource) => DataSource.getComments()
+
+);
+// ------------------------
+const BlogPostWithSubscription = withSubscription(
+
+ BlogPost,
+
+ (DataSource, props) => DataSource.getBlogPost(props.id)
+
+);
+```
+
+
+
+# 08.Hooks总结
+
+
+
+![image-20240609211729082](./assets/image-20240609211729082.png)
+
+
+
+useTransition
+
+
+
+
+
+
+
+# 80.极客园移动端案例 (Mobile)
 
 ## 1.项目环境创建
 
@@ -2269,11 +2755,11 @@ return (<div>
 
 
 
-# 10.极客园案例 (General)
+# 81.极客园案例 (General)
 
-## 10.1.基础准备
+## 1.基础准备
 
-### 10.1.1.项目目录清理与构建
+### 1.1.项目目录清理与构建
 
 ```
 npm install antd --save
@@ -2285,7 +2771,7 @@ npm install antd --save
 
  
 
-### 10.1.2.基础路由配置
+### 1.2.基础路由配置
 
 1. 安装路由包 react-router-dom
 2. 准备俩个基础路由组件 Layout 和 Login
@@ -2294,9 +2780,9 @@ npm install antd --save
 
 
 
-## 10.2.架构类要点
+## 2.架构类要点
 
-### 10.2.1.token持久化
+### 2.1.token持久化
 
 
 
@@ -2338,7 +2824,7 @@ export default userReducer
 
 
 
-### 10.2.2.拦截器实现请求头携带token
+### 2.2.拦截器实现请求头携带token
 
 ```jsx
 request.interceptors.request.use((config) => {
@@ -2357,7 +2843,7 @@ request.interceptors.request.use((config) => {
 
 
 
-### 10.2.3.基于Token路由权限控制
+### 2.3.基于Token路由权限控制
 
 ![image-20240430174224248](./assets/image-20240430174224248.png)
 
@@ -2401,7 +2887,7 @@ const router = createBrowserRouter([
 
 
 
-### 10.2.4.样式reset
+### 2.4.样式reset
 
 - 登录以后, 可能会出现页面 因为 不同的浏览器而出现样式不适配 情况, 如下图 页面周围均存在间隙;
 - 解决办法: 安装normalize.css `npm install normalize.css`
@@ -2470,15 +2956,15 @@ request.interceptors.response.use((response) => {
 
 
 
-## 10.3.功能类要点-发布文章
+## 3.功能类要点-发布文章
 
-### 10.3.1.echarts渲染
-
-
+### 3.1.echarts渲染
 
 
 
-### 10.3.2.富文本编辑器
+
+
+### 3.2.富文本编辑器
 
 - 依赖安装
 
@@ -2510,7 +2996,7 @@ request.interceptors.response.use((response) => {
 
 
 
-### 10.3.3.发布文章参数解构与请求发送
+### 3.3.发布文章参数解构与请求发送
 
 - Form组件本身onFinish方法将传递参数, 可通过console.log先打印看参数构成; 
 - 解构传递过来的参数, 组装参数, 发送请求
@@ -2519,7 +3005,7 @@ request.interceptors.response.use((response) => {
 
 
 
-### 10.3.4.单图/三图/无图选定默认值
+### 3.4.单图/三图/无图选定默认值
 
 <img src="./assets/image-20240501212530243.png" alt="image-20240501212530243" style="zoom: 50%;" />
 
@@ -2529,9 +3015,9 @@ request.interceptors.response.use((response) => {
 
 
 
-## 10.4.功能类要点-文章列表与编辑
+## 4.功能类要点-文章列表与编辑
 
-### 10.4.1.文章编辑携带ID跳转
+### 4.1.文章编辑携带ID跳转
 
 ```jsx
 const columns = [
@@ -2572,7 +3058,7 @@ const columns = [
 
 
 
-### 10.4.2.编辑页回填
+### 4.2.编辑页回填
 
 - 通过useSearchParam, 通过以下方法获取携带过来的param参数
 - 由于接口请求获取的响应为` { cover: { type: 3 }}`, 但页面所需要地为{ type: 3 }, 所以需要展开获取:
@@ -2599,7 +3085,7 @@ const columns = [
 
 
 
-### 10.4.3.更新文章
+### 4.3.更新文章
 
 - 更新文章时, 基于 场景有不同的逻辑, 比如 处理照片url的逻辑 以及 调用 新增或者更新文章 的逻辑
 
@@ -2643,9 +3129,9 @@ const onFinish = (formData) => {
 
 
 
-## 10.5.打包优化
+## 5.打包优化
 
-### 10.5.1.本地模拟启动
+### 5.1.本地模拟启动
 
 ```shell
 # 执行打包命令
@@ -2663,7 +3149,7 @@ http://localhost:3000/
 
 
 
-### 10.5.2.配置路由懒加载
+### 5.2.配置路由懒加载
 
 ```jsx
 import Login from '../pages/Login'
@@ -2710,7 +3196,7 @@ export default router
 
 
 
-### 10.5.3.包体积可视化分析
+### 5.3.包体积可视化分析
 
 ```shell
 # 安装
@@ -2724,7 +3210,7 @@ npm i source-map-explorer
 
 
 
-### 10.5.4.CDN配置
+### 5.4.CDN配置
 
 - CDN (Content Distributing Network)是一种内容分发网络服务，当用户请求网站内容时，由离用户最近的服务器将缓存的资源内容传递给用户
 - 哪些资源可以放到CDN服务器? 体积较大的非业务JS文件, 比如react、react-dom
@@ -2770,9 +3256,9 @@ npm i source-map-explorer
 
 ![Screenshot 2024-04-13 at 19.04.54](./assets/Screenshot 2024-04-13 at 19.04.54.png)
 
-# 12.美团购物车案例 (Redux)
+# 82.美团购物车案例 (Redux)
 
-## 12.1.准备工作
+## 1.准备工作
 
 ```shell
 // 克隆项目到本地
@@ -2785,7 +3271,7 @@ npm i
 
 
 
-## 12.2.实现目标
+## 2.实现目标
 
 - redux异步加载菜单内容
 - 左侧菜单栏tab点击选中 1. 高亮显示 2. 右侧菜单同步刷新
@@ -2796,7 +3282,7 @@ npm i
 
 
 
-# 13.记账本案例 (Router)
+# 83.记账本案例 (Router)
 
 
 
