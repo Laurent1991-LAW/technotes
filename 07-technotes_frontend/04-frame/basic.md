@@ -48,8 +48,8 @@ export default function Page() {
 - 环境变量中配置密钥信息
 
 ```properties
-STRIPE_API_KEY=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
-STRIPE_WEBHOOK_SECRET=whsec_H3UuQMBjEYeVukdf1tB8d6KtJm3UP2rc
+STRIPE_API_KEY=***
+STRIPE_WEBHOOK_SECRET=***
 ```
 
 - 点击subscribe和topUp时, 调用不同的url即可
