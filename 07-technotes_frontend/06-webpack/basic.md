@@ -604,3 +604,116 @@ npm i thread-loader -D
 Include-Exclude
 
 CodeSplit
+
+
+
+
+
+
+
+
+
+# 06.Troubleshooting
+
+
+
+## react项目在edge浏览器的Internet Explorer mode下无法打开
+
+在Internet Explorer模式下运行React项目可能会遇到各种兼容性问题，因为React使用了一些现代的JavaScript特性和API，这些特性在较旧的浏览器（如Internet Explorer）中可能不受支持。以下是一些可能的解决方案：
+
+### 1. 使用Polyfills
+你可以使用一些polyfills来增加对现代JavaScript特性的支持。推荐使用`core-js`和`regenerator-runtime`来填补这些空白。
+
+步骤：
+- 安装依赖：
+  ```bash
+  npm install core-js regenerator-runtime
+  ```
+- 在你的项目入口文件（通常是`index.js`或`App.js`）中引入这些polyfills：
+  ```javascript
+  import 'core-js/stable';
+  import 'regenerator-runtime/runtime';
+  ```
+
+### 2. Babel配置
+确保你的Babel配置包含对IE 11的支持。你可以在`.babelrc`或`babel.config.js`文件中做如下配置：
+```json
+{
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "targets": {
+          "ie": "11"
+        },
+        "useBuiltIns": "entry",
+        "corejs": "3"
+      }
+    ]
+  ]
+}
+```
+
+### 3. Webpack配置
+如果你使用Webpack，确保你的配置正确地处理了老浏览器的兼容性问题。可以调整`babel-loader`的配置来确保对老版本浏览器的支持：
+```javascript
+module.exports = {
+  // ... other configurations
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              ['@babel/preset-env', {
+                targets: {
+                  ie: '11'
+                },
+                useBuiltIns: 'entry',
+                corejs: '3'
+              }],
+              '@babel/preset-react'
+            ]
+          }
+        }
+      }
+    ]
+  }
+};
+```
+
+### 4. CSS兼容性
+确保你使用的CSS特性也兼容IE 11。可以使用Autoprefixer在构建过程中自动添加必要的前缀：
+- 安装Autoprefixer和PostCSS：
+  ```bash
+  npm install autoprefixer postcss-loader
+  ```
+- 配置PostCSS：
+  在你的`postcss.config.js`文件中添加如下配置：
+  ```javascript
+  module.exports = {
+    plugins: [
+      require('autoprefixer')
+    ]
+  };
+  ```
+
+### 5. 检查第三方库
+一些第三方库可能不支持IE 11，检查你使用的所有依赖项，确认它们是否支持IE 11。如果有不支持的库，看看是否有替代方案或者polyfill。
+
+### 6. 调试工具
+使用F12开发者工具来调试你的网站，看看是否有任何特定的错误信息，可以帮助你诊断问题。
+
+通过以上步骤，应该可以解决大部分React项目在Internet Explorer模式下运行的问题。如果问题依然存在，可能需要进行更深入的调试和调整。
+
+
+
+
+
+
+
+
+
