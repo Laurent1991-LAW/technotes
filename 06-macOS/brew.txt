@@ -1,17 +1,25 @@
 
+-----------包管理器-----------
+
+Homebrew（macOS）
+
+apt（Ubuntu/Debian Linux）
+
+yum（CentOS/RHEL Linux）
+
 -----------PACKAGE SEARCH------------
 
 brew list
 
-brew list|grep zsz	 # lrzsz or trzsz
+brew list | grep zsz	 # lrzsz or trzsz
  
 brew search zsz 	# lrzsz or trzsz
+
+PS: search使用场景为比如需要安装3.7版本的python, 通过查看brew search python可知目前brew仍在维护的python formulae, 若无python3.7, 则需要安装pyenv手动切换
 
 -----------PACKAGE LOCATION------------
 
 brew info lrzsz
-
-
 
 unzip xxx.zip
 unar xxx.rar

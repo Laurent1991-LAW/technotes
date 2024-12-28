@@ -244,6 +244,201 @@ console.log(counter()); // 输出 2
 
 
 
+## Promise
+
+### 回调地狱
+
+场景: 获取第一次ajax请求获取的id, 作为第二次ajax请求的参数 —— 在没有promise时, 只能通过嵌套ajax实现
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Promise Practice</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<script>
+    $.ajax({
+        type: 'GET',
+        url: './data1.json',
+        success: res => {
+            const { id } = res
+
+            $.ajax({
+                type: 'GET',
+                data: { id },
+                url: './data2.json',
+                success: res => {
+                    const { username } = res
+
+                    $.ajax({
+                        type: 'GET',
+                        data: { ...res },
+                        url: './data3.json',
+                        success: res => {
+                            const { final } = res
+                            console.log(final)
+                        }
+                    })
+                }
+            })
+        }
+    })
+</script>
+</html>
+```
+
+
+
+### Promise实例
+
+<u>Promise实例通过new获取, 构造方法接收2个参数:</u> 
+
+- resolve方法, 参数 为 成功执行的结果
+- reject方法, 参数 为 失败执行的结果
+
+
+
+<u>Promise实例内含三个参数: State, Result以及prototype本身, 后者包含多个方法, 如then</u>
+
+- promise默认的state是 pending
+- 调用resolve变 为 fullfilled
+- 调用reject变为 为 rejected
+- 只有state变化才会触发then里的两个方法
+- pending -> fullfilled 以及 pending -> rejected 都是单向的, 无法倒退
+
+
+
+```html
+<script>
+    const p = new Promise((resolve, reject) => {
+        resolve("成功执行的结果")
+        reject("失败执行的结果")
+    })
+    
+    console.dir(p)
+</script>
+```
+
+
+
+### then方法参数
+
+方法接收2个参数, 均为方法, 成功执行时执行的方法 以及 失败执行时执行的方法, 参数分别为成功执行时 传入resolve方法的参数 以及 失败执行时传入reject方法的参数
+
+```html
+<script>
+    const p = new Promise((resolve, reject) => {
+        //resolve("成功执行的结果")
+        reject("失败执行的结果")
+    })
+    
+    p.then(
+    (value) => {
+        console.log('Run succeeds, here\'s the result: ', value)
+    }, 
+    (err) => {
+        console.log('Run fails, here\'s the reason: ', err)
+    })
+</script>
+```
+
+
+
+### then方法返回值
+
+返回值仍旧为一个Promise实例, 所以支持then方法连续链式调用;
+
+返回的Promise实例state为pending, 所以不会自动执行下一步then的2个参数方法;
+
+如何改变Promise实例的状态, 在then成功方法里用return则为fullfilled, return返回的参数就是下一步then里的value参数, 如果成功方法内部报错则为rejected, 参数就是下一步then里的reason/err参数;
+
+
+
+### catch方法
+
+执行时机
+
+- promise方法状态改为rejected时;
+- promise方法执行体内部报错时;
+
+```html
+<script>
+	new Promise((resolve, reject) => {
+    
+  }).then(value => {
+    console.log('succeed', value)
+  }).catch(err => {
+    console.log('error', err)
+  })
+</script>
+```
+
+
+
+### 解决办法
+
+```html
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Promise Practice</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+
+<script>
+    new Promise((resolve, reject) => {
+        $.ajax({
+            type: 'GET',
+            url: './data1.json',
+            success: res => {
+                const { id } = res
+    // ---- 初始方法体中的resolve为必须 ----
+                resolve(id)  
+            }
+        })
+    }).then(value => {
+        $.ajax({
+            type: 'GET',
+            data: { value },
+            url: './data2.json',
+            success: res => {
+                const { username } = res
+                return username
+            }
+        })
+    }).then(value => {
+        $.ajax({
+            type: 'GET',
+            data: { value },
+            url: './data3.json',
+            success: res => {
+                const { final } = res
+                console.log(final)
+            }
+        })
+    }).catch(err => {
+        console.log(err)
+    })
+    
+</script>
+
+</html>
+```
+
+
+
+
+
+
+
+
+
 # ES6
 
 ## 操作数组的方法map、filter、reduce、find
@@ -529,4 +724,237 @@ Cookie、sessionStorage 和 localStorage 都是浏览器提供的存储机制，
    - **Mutation**：通常是单一的，直接修改状态，不易于复用和组合
 
 总结来说，`mutation`用于同步地修改状态，而`action`用于处理异步操作并通过提交`mutation`来间接修改状态。这种分离有助于保持状态变更的可追踪性和可预测性，同时也提供了更好的代码组织和复用性。
+
+
+
+
+
+# 速查JS
+
+## 正则表达式
+
+### 1.删除JS里的双斜线注释
+
+为了构建一个能够匹配双斜线后接一个或多个空格，再接多个中文字符、字母、数字或中英文标点的正则表达式，我们可以扩展之前提供的正则表达式。以下是满足这些条件的正则表达式：
+
+```regex
+//\s+[\u4e00-\u9fa5A-Za-z0-9\u0020-\u007E\uFF01-\uFF5E]+
+```
+
+这里对正则表达式的各部分进行解释：
+
+- `//`：匹配两个连续的斜线。
+- `\s+`：匹配一个或多个空白字符（包括空格、制表符等）。如果你想只匹配空格，可以替换为 ` +`。
+- `[\u4e00-\u9fa5A-Za-z0-9\u0020-\u007E\uFF01-\uFF5E]+`：这部分匹配一个或多个指定范围内的字符。
+  - `\u4e00-\u9fa5`：匹配中文字符。
+  - `A-Za-z0-9`：匹配英文大小写字母和数字。
+  - `\u0020-\u007E`：匹配基本拉丁文（包括英文标点符号）。
+  - `\uFF01-\uFF5E`：匹配全角标点符号（即中文标点符号）。
+
+注意，`\u0020-\u007E` 包含了从空格到波浪号的所有可打印的 ASCII 字符，这涵盖了大部分常用的英文标点符号。而 `\uFF01-\uFF5E` 范围内包含了全角标点符号，即中文标点符号。
+
+
+
+### 2.删除字符串“-txt-number”或“-number”后缀
+
+```regex
+/-(txt-\d+|\d+)$/
+```
+
+
+
+
+
+## 遍历获取
+
+有一个数组, 内部对象有一个id属性, 我希望获取所有id属性用.间隔拼接起来的长字符串, 如何用js实现?
+
+你可以使用 JavaScript 提供的一些内置方法，如 `map` 和 `join`，来实现将数组中的对象的 `id` 属性提取并用点（`.`）间隔拼接成一个长字符串。
+
+示例代码
+
+假设你有一个数组 `arr`，每个对象都有一个 `id` 属性：
+
+```javascript
+const arr = [
+  { id: 1, name: 'Alice' },
+  { id: 2, name: 'Bob' },
+  { id: 3, name: 'Charlie' }
+];
+```
+
+你可以使用以下代码来实现：
+
+```javascript
+const idsString = arr.map(item => item.id).join('.');
+console.log(idsString); // 输出: "1.2.3"
+```
+
+代码解释
+
+1. **`map` 方法**：`map` 方法遍历数组中的每一个元素，并返回一个新数组，其中包含每个元素执行回调函数后的返回值。这里我们用 `map` 将每个对象的 `id` 属性提取出来，形成一个数组 `[1, 2, 3]`。
+2. **`join` 方法**：`join` 方法将数组中的所有元素连接成一个字符串，并使用指定的分隔符将每个元素分开。在这里我们使用 `'.'` 作为分隔符。
+
+完整示例
+
+以下是一个完整的示例，包括数组定义和最终的输出：
+
+```javascript
+const arr = [
+  { id: 1, name: 'Alice' },
+  { id: 2, name: 'Bob' },
+  { id: 3, name: 'Charlie' },
+  { id: 4, name: 'David' }
+];
+
+const idsString = arr.map(item => item.id).join('.');
+console.log(idsString); // 输出: "1.2.3.4"
+```
+
+处理边界情况
+
+你可能需要处理一些边界情况，例如数组为空或对象缺少 `id` 属性。以下是一个更健壮的实现：
+
+```javascript
+const arr = [
+  { id: 1, name: 'Alice' },
+  { id: 2, name: 'Bob' },
+  { name: 'Charlie' }, // 缺少 id
+  { id: 4, name: 'David' }
+];
+
+const idsString = arr
+  .filter(item => item.id !== undefined) // 过滤掉没有 id 的对象
+  .map(item => item.id) // 提取 id
+  .join('.'); // 用 '.' 连接
+
+console.log(idsString); // 输出: "1.2.4"
+```
+
+在这个示例中，`filter` 方法用于过滤掉那些缺少 `id` 属性的对象，确保最后得到的字符串只包含有效的 `id`。
+
+
+
+## reduce使用
+
+**案例**: url中的aaa-bbb-ccc转变为标题Aaa-Bbb-Ccc
+
+```jsx
+function formatString(str) {
+  return str.split('-')
+    .reduce((acc, word) => acc + (word.charAt(0).toUpperCase() + word.slice(1)) + ' ', '')
+    .trim();
+}
+
+// 测试示例
+const input = "dsd-sfsdf-efef";
+const result = formatString(input);
+console.log(result);  // 输出: "Dsd Sfsdf Efef"
+```
+
+
+
+
+
+
+
+## set沿用原数组并新增元素
+
+```js
+setExpandedNodes(
+	prevStat => (
+		{
+			...prevStat,
+			[target]: true
+		}
+	)
+)
+```
+
+
+
+## 字符串按空格按最平衡长度切分子串
+
+方法入参为字符串s和数字n, 方法将返回该字符串 以空格(可为1个也可能为多个)切分的子串数组, 字串数量最多为n, 但并非所有空格处都要被切分, 目标为所有子串的长度尽量接近,  比如对于字符串s = ‘xxxxxxxx yyyyyyyyy ssss eeer’, n=3, 应该返回[‘xxxxxxxx’, ‘yyyyyyyyy’, ‘ssss eeer’]
+
+```js
+function splitStringWithBalancedLength(s, n) {
+  // 去掉字符串两端的空格
+  s = s.trim();
+
+  // 如果字符串为空或者n为0，直接返回空数组
+  if (!s || n <= 0) return [];
+
+  // 将字符串按空格分割成单词数组
+  const words = s.split(/\s+/);
+
+  // 如果单词数小于等于n，直接返回每个单词作为一个子串
+  if (words.length <= n) return words;
+
+  const result = [];
+  let currentChunk = '';
+  let currentLength = 0;
+  let chunksLeft = n;
+
+  for (let word of words) {
+    // 计算如果加入当前单词后的总长度
+    const nextLength = currentLength + word.length + (currentChunk ? 1 : 0);
+
+    // 如果加入当前单词后不会超过平均长度，或者这是最后一个子串
+    if (nextLength <= Math.ceil(s.length / n) || chunksLeft === 1) {
+      currentChunk += (currentChunk ? ' ' : '') + word;
+      currentLength = nextLength;
+    } else {
+      // 否则，将当前子串加入结果数组，并开始新的子串
+      result.push(currentChunk);
+      currentChunk = word;
+      currentLength = word.length;
+      chunksLeft--;
+    }
+  }
+
+  // 将最后一个子串加入结果数组
+  if (currentChunk) {
+    result.push(currentChunk);
+  }
+
+  return result;
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+# Troubleshooting
+
+
+
+## 1. tooltip文字向左对齐后右侧易出现留白
+
+以下两者搭配可解决: 
+
+```css
+text-align: justify;    
+max-width: 300px; 
+```
+
+
+
+2. 文字过长显示省略号悬浮出全文
+
+```html
+<p style={{
+                                    margin: 0,overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    whiteSpace: 'nowrap', }}>{column.name}</p>
+```
+
+
 

@@ -8,7 +8,31 @@
 暂存区：通过git add添加，但是没有git commit的文件所在的区域
 
 ```shell
-// 若拉取失败，一般为 提交文件 与 服务器文件 存在冲突，需要手动解决冲突
+# 查看当前repo远程仓库
+git remote -v
+
+# 为当前仓库添加远程地址
+git remote add origin https://github.com/username/repository.git
+
+# 将当前的分支重命名为 main
+#		比如本地git init生成的分支一般为 master
+#		该指令将其命名为 main
+git branch -M main
+
+# 将本地的 main 分支推送到远程仓库的 origin 服务器 并设置追踪信息
+# 	-u 其实就是 --set-upstream
+# 		若没有 -u origin main 的指令将收到建议: git push --set-upstream origin main
+git push -u origin main
+
+# 若拉取失败，一般为 提交文件 与 服务器文件 存在冲突，需要手动解决冲突
+
+# 退出git log
+q
+
+# 使用 Nano：
+   – 按下 `Ctrl` 键和 `X` 键，弹出退出提示
+   – 输入 `Y` 以保存更改
+   – 按下 `Enter` 键，退出编辑器
 
 # 查看文件状态
 git status
@@ -40,6 +64,22 @@ git config --global gui.encoding utf-8
 git config --global i18n.commitencoding utf-8
 git config --global i18n.logoutputencoding utf-8
 export LESSCHARSET=utf-8
+```
+
+
+
+#### 合并本地最近n次commits
+
+```bash
+# 如何合并最近n次commit
+git rebase -i HEAD~n
+
+pick abcdefg 提交信息1
+squash hijklmn 提交信息2
+squash opqrstu 提交信息3
+
+# 如果在合并过程中出现冲突，Git 会暂停变基过程，并提示你解决冲突。解决冲突后，使用 git add . 命令标记冲突已解决，然后继续变基过程 git rebase --continue。
+
 ```
 
 
@@ -219,3 +259,4 @@ git push
 
 
 
+​	

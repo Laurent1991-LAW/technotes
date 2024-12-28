@@ -2427,7 +2427,100 @@ const BlogPostWithSubscription = withSubscription(
 
 useTransition
 
+在 React 中，`useRef` 和 `createRef` 都用于创建引用对象，用来访问 DOM 元素或其他 React 组件，但它们有一些关键区别，特别是在使用场景和生命周期管理方面。
 
+### `useRef`
+
+`useRef` 是一个 React Hook，它主要用于函数组件中。它在组件的整个生命周期内保持引用对象的稳定性，这意味着在组件重新渲染时，`useRef` 返回的引用对象不会改变。
+
+主要特点：
+
+1. **在函数组件中使用**：`useRef` 是一个 Hook，适用于函数组件。
+2. **保持引用对象的稳定性**：在组件的整个生命周期中，引用对象都是同一个。
+3. **可以存储任意可变值**：不仅仅是 DOM 元素，可以存储任何需要的可变值，而不会触发重新渲染。
+
+```javascript
+import React, { useRef, useEffect } from 'react';
+
+function MyComponent() {
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    inputRef.current.focus();
+  }, []);
+
+  return <input ref={inputRef} type="text" />;
+}
+```
+
+### `createRef`
+
+`createRef` 是一种用于类组件和函数组件的方式，它在每次渲染时创建一个新的引用对象。这意味着在类组件的生命周期内，每次重新渲染都会生成一个新的引用对象。
+
+主要特点：
+
+1. **在类组件和函数组件中都可以使用**：`createRef` 可以在类组件和函数组件中使用。
+2. **在每次渲染时创建新的引用对象**：这在类组件中通常不是问题，但在函数组件中可能会带来一些复杂性，因为每次渲染都会生成新的引用对象。
+
+```javascript
+import React, { Component, createRef } from 'react';
+
+class MyComponent extends Component {
+  constructor(props) {
+    super(props);
+    this.inputRef = createRef();
+  }
+
+  componentDidMount() {
+    this.inputRef.current.focus();
+  }
+
+  render() {
+    return <input ref={this.inputRef} type="text" />;
+  }
+}
+```
+
+
+
+### 在 React Flow 中的使用场景
+
+React Flow 是一个用于构建交互式图表的库，在这种场景中，`useRef` 和 `createRef` 的选择依然遵循它们的基本特点和适用场景：
+
+- **使用 `useRef`**：如果您在函数组件中使用 React Flow，并且需要在整个组件生命周期中保持引用对象的稳定性，那么 `useRef` 是更好的选择。
+- **使用 `createRef`**：如果您在类组件中使用 React Flow，或者需要在每次渲染时重新创建引用对象，那么可以使用 `createRef`。
+
+### 示例：React Flow 中的 `useRef` 使用
+
+```javascript
+import React, { useRef, useEffect } from 'react';
+import ReactFlow, { ReactFlowProvider } from 'react-flow-renderer';
+
+function FlowComponent() {
+  const reactFlowWrapper = useRef(null);
+
+  useEffect(() => {
+    if (reactFlowWrapper.current) {
+      // 可以在这里访问 reactFlowWrapper.current
+    }
+  }, []);
+
+  return (
+    <ReactFlowProvider>
+      <div ref={reactFlowWrapper} style={{ width: '100%', height: '400px' }}>
+        <ReactFlow elements={[]} />
+      </div>
+    </ReactFlowProvider>
+  );
+}
+```
+
+### 总结
+
+- **`useRef`**：在函数组件中使用，保持引用对象在整个生命周期内不变，适合需要持久引用的场景。
+- **`createRef`**：在类组件和函数组件中都可以使用，但每次渲染都会生成新的引用对象，适合需要重新创建引用的场景。
+
+在 React Flow 的使用中，根据您的组件类型和需求选择合适的方式即可。
 
 
 
