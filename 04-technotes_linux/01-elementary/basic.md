@@ -8,6 +8,25 @@
 
 **Linux指令**
 
+```bash
+# -i 忽略大小写
+env | grep -i proxy 
+
+# 请求返回体
+curl --request POST --url 'https://10.121.164.6/openai/xxx' --header 'api-key: xxxx' --data '{ddd:[dd,ss,aa]}' \
+-k | jq .
+```
+
+> -k：--insecure 的简写形式。这个参数表示忽略 SSL 证书验证。在使用 HTTPS 协议时，curl 会默认验证服务器的 SSL 证书，如果服务器使用的是自签名证书或者证书存在问题，curl 会报错。使用 -k 参数可以绕过证书验证，但这样会存在一定的安全风险，因为无法确保与你通信的服务器是合法的。
+>
+> jq 是一个轻量级且灵活的命令行 JSON 处理器，用于处理和格式化 JSON 数据。
+> . 是 jq 的一个基本过滤器，表示输出完整的 JSON 对象。jq . 会将 curl 命令返回的 JSON 响应进行格式化，使其更易读。
+
+```bash
+```
+
+
+
 
 
 # **查看程序启动时间**

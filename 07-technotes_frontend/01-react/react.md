@@ -2196,6 +2196,32 @@ export default App
 
 
 
+## 6.5.forwardRef
+
+- forwardRef保证父组件可顺利获取子组件的ref, 在ts中后带有2个范型限定 :
+  - HTMLDivElement	==>	限定子组件ref所绑定的元素, 也就是第五行的元素类型
+  - React.HTMLAttributes\<HTMLDivElement>     ==>      限定接收的props类型, 接受所有div下的属性定义（如 `id`, `className`, `onClick` 等）
+- 综合以上范型定义后, 引用Card的代码可如下: `<Card ref={cardRef} className="myCard" onClick={handleClick} />`
+
+```tsx
+const Card = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+    <div
+    ref={ref}
+    className={cn(
+      "rounded-xl border bg-card text-card-foreground shadow",
+      className
+    )}
+    {...props}
+  />
+))
+Card.displayName = "Card"
+```
+
+
+
 
 
 # 07.Advanced Concepts

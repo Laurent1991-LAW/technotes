@@ -41,6 +41,16 @@ export default function Page() {
 
 
 
+## 1.2.登录成功后跳转路径
+
+
+
+![image-20241229084733771](./assets/image-20241229084733771.png)
+
+![image-20241229084825329](./assets/image-20241229084825329.png)
+
+
+
 
 
 # 02.Stripe - 支付

@@ -8,6 +8,9 @@
 暂存区：通过git add添加，但是没有git commit的文件所在的区域
 
 ```shell
+# 获取远端信息
+git fetch
+
 # 查看当前repo远程仓库
 git remote -v
 

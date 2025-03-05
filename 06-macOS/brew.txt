@@ -23,3 +23,5 @@ brew info lrzsz
 
 unzip xxx.zip
 unar xxx.rar
+
+-----------Remove------------

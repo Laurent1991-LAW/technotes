@@ -1,19 +1,16 @@
-# 基本指令
+# 基础与环境
 
-```
+## 基本指令
+
+```shell
 python3 --version
+
 pip3 install xx
-
-
-
-
 ```
 
 
 
-# 环境配置
-
-
+## 环境配置
 
 ```bash
 # 查看版本 注意: 不是-v
@@ -43,7 +40,19 @@ source .venv/bin/activate
 
 
 
-# 多版本安装与切换
+## 工作目录
+
+py文件中所指的目录为 执行命令行的目录, 也就是 > 左边的部分
+
+![IMG_5275](./assets/IMG_5275.JPG)
+
+
+
+## 多版本安装与切换
+
+### pyenv
+
+- Context: 本想在homebrew里安装python3.7, 但通过brew search发现brew维护的python里没有这个formulea(=版本), 于是安装了pyenv —— via homebrew lol
 
 ```shell
 brew install pyenv
@@ -58,18 +67,44 @@ source ~/.bash_profile
 
 pyenv install --list
 
-pyenv install 3.7.17
+pyenv install 3.11.5
 pyenv global 3.7.17
 pyenv local 3.7.17
 
 python --version
 
 pyenv versions
+
+# 版本下第三方包位置
+cd ~/.pyenv/versions/3.11.5/lib/python3.11/site-packages
 ```
 
 
 
-# 三元表达式
+### homebrew
+
+```bash
+brew list | grep python
+
+brew info python@3.12
+
+# all packages intalled by Homebrew python go to:
+cd /opt/homebrew/Cellar/python-packaging/24.2/lib/python3.13/site-packages
+
+
+/opt/homebrew/Cellar/python@3.12/3.12.2_1/bin
+/opt/homebrew/Cellar/python@3.13/3.13.1/bin
+```
+
+
+
+
+
+
+
+# 语法
+
+## 三元表达式
 
 当然，Python中的三元条件表达式（也称为条件运算符）的语法是：`value_if_true if condition else value_if_false`。以下是一些例子：
 
@@ -103,9 +138,9 @@ pyenv versions
 
 以上这些示例展示了如何在一行代码中使用三元条件表达式进行简洁的条件判断和赋值操作。
 
-# 字符串操作
+## 字符串操作
 
-## 格式化字符串
+### 格式化字符串
 
 ```
 name = "Tom"
@@ -113,9 +148,7 @@ age = 18
 print(f"My name is {name}, and I am {age} years old.")
 ```
 
-
-
-## 查找正则
+### 查找正则
 
 ```python
 import re
@@ -126,7 +159,7 @@ splits = re.findall('(['\u4e00-\u9fa5'])+\|([A-Z]+)', txt)
 
 
 
-# 集合操作
+## 集合操作
 
 ### 列表转字典
 
@@ -136,17 +169,15 @@ lst = [[‘中国’, ‘cn’],[‘美国’,‘us’],[‘欧盟’,‘eu’],
 dict = dict(lst) # 直接转化为字典
 ```
 
-# 列表操作
 
 
+## 列表操作
 
 获取列表最后一个元素 lst[-1]
 
 
 
-
-
-# 继承关系
+## 继承关系
 
 Python 中可以通过定义抽象基类（Abstract Base Classes, ABCs）来模拟接口的概念。Python 的内置模块 `abc` 提供了 `ABC` 类和 `abstractmethod` 装饰器来创建抽象基类和抽象方法。当一个普通类继承自这样的抽象基类并实现了所有抽象方法时，可以看作是实现了相应接口。语法示例如下：
 
@@ -170,13 +201,15 @@ class MyClass(MyInterface):
 
 
 
-# 多线程
 
 
+## 多线程
 
-## 从GCS中下载文件
+### 从GCS中下载文件
 
 使用 Google Cloud Storage (GCS) 的 Python SDK (`google-cloud-storage`) 进行批量下载文件的操作可以通过以下步骤实现。我们将编写一个脚本来列出桶中的所有文件，并逐个下载它们到本地目录。
+
+
 
 ### 安装 Google Cloud Storage SDK
 
@@ -412,13 +445,161 @@ WebDriverWait(drive, 100).until(
 # 等待‘页面加载出 待勾选乘车人信息’
 WebDriverWait (driver, 1000). until( ec.presence_of_element_located((By.XPATH,'//ul[@id="normal_passenger_id"]/li/label')) 
 )
+```
 
 
+
+# Jupyter
+
+
+
+## Basics
+
+> A - 上方新增cell
+> B - 下方新增cell
+> X - 剪切
+> C - 复制
+> V - 粘贴
+> Z - 撤销
+> Y - codes模式
+> M - markdown模式
+
+ctrl+enter 可以进行run
+
+```python
+help(len)
+?len
+# shift + table 结合查看某个函数解释
+```
+
+
+
+直接运行外部, 可将所有资源加载到notebook内, 之后即可直接引用其方法或变量, 如下方的GCZRequest()
+
+![image-20250224181230576](./assets/image-20250224181230576.png)
+
+
+
+#time和#timeit
+
+下划线可以表输出, 比如`_17` 表示17格cell的输出内容, `_`表示上一格输出内容
+
+
+
+
+
+
+
+## Numpy
+
+
+
+数组vs列表
+
+数组: 要求元素类型相同
+
+列表: 即 指针数组, 每个元素存储的其实是当前元素实体所在的内存地址(内存地址 的 类型总该一样了吧)
+
+
+
+```python
+import Numpy as np
+
+np.array([1, 3.14, 'hello'])
 ```
 
 
 
 
 
+numpy设计初衷是用于运算的，所以对数据类型进行统一优化
+注意：
+• numpy默认ndarray的所有元素的类型是相同的
+• 如果传进来的列表中包含不同的类型，则统一为同一类型，优先级：str > float > int
+
+如果输入的数组元素包含字符串, 则所有元素都统一为 字符串
+若包含float, 且不存在字符串, 则都统一为float
+
+![image-20250224184743335](./assets/image-20250224184743335.png)
 
 
+
+
+
+2. 使用np的routines函数创建
+
+
+
+8） 正态分布函数
+• np.random.randn（do, d1， ...， dn） 标准正态分布
+• np.random.normal（） 普通正态分布
+
+```python
+import Numpy as np
+
+# --- ones --- 
+np.ones(shape, dtype=None, order='C')
+
+# --- zeros --- 
+np.zeros(shape, dtype=float, order='C')
+
+# --- full --- 
+np.full(shape, fill_ value, dtype=None, order='C')
+np.full(shape=(2,3), fill_value=6, dtype=None, order='C')
+
+# --- eye --- 
+пр.eye(N, M=None, k=0, dtype=float)
+# 即生成单位矩阵, 如下例生成三阶单位矩阵
+np.eye(N=3)
+# k值控制对角线左右平移单位
+np.eye(N=3, k=1)
+
+# --- linspace --- 
+np.linspace(start, stop, num=50, endpoint=True, retstep=False, dtype=None)
+# 生成等差数列, endpoint:是否包含最后一个元素
+np.linspace(start=0, stop=5, num=5, endpoint=False)
+[0,1,2,3,4,5]
+
+# --- arange --- 
+пр.arange([start, ]stop, [step, ]dtype=None)
+
+# --- random.randint --- 
+np.random.randint(low, high=None, size=None, dtype=1)
+# 生成随机整数
+
+# --- random.randn --- 
+np.random.randn(d0, d1, ..., dn） 
+# 标准正态分布
+
+# --- random.normal --- 
+np.random.normal()
+np.random.normal(loc=170, scale=5, size=(5,5))
+                
+# --- random.random --- 
+np.random.random(size=(5,5))
+# 生成0-1的随机小数, 左闭右开
+                
+# --- random.permutation --- 
+np.random.permutation(10)
+# 生成长度为10的数组的随机排序索引
+```
+
+
+
+4个必记参数：
+
+• ndim：维度
+
+• shape：形状（各维度的长度）
+
+• size：总长度
+
+• dtype：元素类型
+
+
+
+高维数组
+
+3维: 图像
+
+4维: 视频
